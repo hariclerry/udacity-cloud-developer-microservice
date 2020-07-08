@@ -1,53 +1,41 @@
-# Udagram Image Filtering Microservice
+## Udagram microservice
+Udagram is a simple cloud application developed alongside the Udacity Cloud Engineering Nanodegree. It allows users to register and log into a web client, post photos to the feed, and process photos using an image filtering microservice. Following are the services involved in this project:
 
-Udagram is a simple cloud application developed alongside the Udacity Cloud Engineering Nanodegree. It allows users to register and log into a web client, post photos to the feed, and process photos using an image filtering microservice.
+* “user” - allows users to register and log into a web client, 
+* “feed” - allows users to post photos, and process photos using image filtering 
+* “frontend” - acts as an interface between the user and the backend-services
+* "reverseproxy" - For resolving multiple services running on same port in separate containers
 
-The project is split into three parts:
-1. [The Simple Frontend](/udacity-c3-frontend)
-A basic Ionic client web application which consumes the RestAPI Backend. 
-2. [The RestAPI Feed Backend](/udacity-c3-restapi-feed), a Node-Express feed microservice.
-3. [The RestAPI User Backend](/udacity-c3-restapi-user), a Node-Express user microservice.
+Correspondingly, the project is split into following parts:
+1. The RestAPI Feed Backend, a Node-Express feed microservice.
+2. The RestAPI User Backend, a Node-Express user microservice.
+3. The Simple Frontend - A basic Ionic client web application which consumes the RestAPI Backend.
+4. Nginx as a reverse-proxy server, when different backend services are running on the same port, then a reverse proxy server directs client requests to the appropriate backend server and retrieves resources on behalf of the client.  
 
-## Getting Setup
+### Dependencies
+- Node/Express
+- ionic
+- AWS credentials and setup to connect to the postgres database
 
-> _tip_: this frontend is designed to work with the RestAPI backends). It is recommended you stand up the backend first, test using Postman, and then the frontend should integrate.
-
-### Installing Node and NPM
-This project depends on Nodejs and Node Package Manager (NPM). Before continuing, you must download and install Node (NPM is included) from [https://nodejs.com/en/download](https://nodejs.org/en/download/).
-
-### Installing Ionic Cli
-The Ionic Command Line Interface is required to serve and build the frontend. Instructions for installing the CLI can be found in the [Ionic Framework Docs](https://ionicframework.com/docs/installation/cli).
-
-### Installing project dependencies
-
-This project uses NPM to manage software dependencies. NPM Relies on the package.json file located in the root of this repository. After cloning, open your terminal and run:
-```bash
-npm install
-```
->_tip_: **npm i** is shorthand for **npm install**
-
-### Setup Backend Node Environment
-You'll need to create a new node server. Open a new terminal within the project directory and run:
-1. Initialize a new project: `npm init`
-2. Install express: `npm i express --save`
-3. Install typescript dependencies: `npm i ts-node-dev tslint typescript  @types/bluebird @types/express @types/node --save-dev`
-4. Look at the `package.json` file from the RestAPI repo and copy the `scripts` block into the auto-generated `package.json` in this project. This will allow you to use shorthand commands like `npm run dev`
-
-
-### Configure The Backend Endpoint
-Ionic uses enviornment files located in `./src/enviornments/enviornment.*.ts` to load configuration variables at runtime. By default `environment.ts` is used for development and `enviornment.prod.ts` is used for produciton. The `apiHost` variable should be set to your server url either locally or in the cloud.
-
-***
-### Running the Development Server
-Ionic CLI provides an easy to use development server to run and autoreload the frontend. This allows you to make quick changes and see them in real time in your browser. To run the development server, open terminal and run:
-
-```bash
-ionic serve
-```
-
-### Building the Static Frontend Files
-Ionic CLI can build the frontend into static HTML/CSS/JavaScript files. These files can be uploaded to a host to be consumed by users on the web. Build artifacts are located in `./www`. To build from source, open terminal and run:
-```bash
-ionic build
-```
-***
+### Exercise Instructions
+Follow the below instructions:
+#### Instruction 1 - Clone the GitHub repo
+1. Clone the following Git repository - https://github.com/hariclerry/udacity-cloud-developer-microservice
+2. To run the application in a docker container, cd into course-03/exercises/udacity-c3-deployment/docker directory and follow the below steps;
+    - Build docker images run `docker-compose -f docker-compose-build.yaml build --parallel`
+    - To pull docker images from docker hub run `docker-compose -f docker-compose-build.yaml pull`
+    - To start the container run `docker-compose up`
+    - Navigate to the browser and run `http://localhost:8100` to see the Udagram application up and running 
+    - To remove the container, run the following commands;
+        `docker container ls
+        docker container kill <container_name>
+        docker container prune` 
+ 3. To run the application in a a kubernetes cluster, cd into course-03/exercises/udacity-c3-deployment/k8s directory and follow the below steps;
+    - Run all deployments in the k8s, for example `kubectl apply -f reverseproxy-deployment.yaml`
+    - Run all services in the k8s, for example `kubectl apply -f reverseproxy-service.yaml`
+    - To start the backend services run `kubectl port-forward service/reverseproxy 8080:8080`
+    - To start the frontend app run `kubectl port-forward service/frontend 8100:8100`
+    - Navigate to the browser and run `http://localhost:8100` to see the Udagram application up and running 
+    - To redeploy changes run `kubectl apply -f <name-deployment>.yaml` with the name of the deployment
+    - To remove a deployment, run, for example `kubectl delete reverseproxy-deployment.yaml`
+    - To remove a service, run, for example `kubectl delete svc reverseproxy`    
