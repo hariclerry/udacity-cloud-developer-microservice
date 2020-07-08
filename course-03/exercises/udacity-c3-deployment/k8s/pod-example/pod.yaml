@@ -4,16 +4,16 @@ metadata:
   name: pod-example
 spec:
   containers:
-  - image: scheele/reverseproxy
+  - image: clerryha/reverseproxy
     name: reverseproxy
     imagePullPolicy: Always          
     resources:
       requests:
         memory: "64Mi"
-        cpu: "250m"
+        cpu: "50m"
       limits:
         memory: "1024Mi"
-        cpu: "500m"       
+        cpu: "150m"       
     ports:
     - containerPort: 8080
   restartPolicy: Always
